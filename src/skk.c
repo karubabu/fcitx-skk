@@ -637,6 +637,9 @@ FcitxSkkGetCandWords(void *arg)
     case ChooseASDF:
         FcitxCandidateWordSetChoose(candList, ASDF_STR_CHOOSE);
         break;
+    case ChooseAOEU:
+        FcitxCandidateWordSetChoose(candList, AOEU_STR_CHOOSE);
+        break;
     case ChooseDigit:
 // FALL THRU
     default:
