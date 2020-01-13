@@ -36,3 +36,8 @@ CMakeCache.*
 *cmake_cache*
 cmake_install.cmake
 cmake-build-*
+config.h
+compile_commands.json
+install_manifest.txt
+gui/*.plist
+src/dictionary_list
