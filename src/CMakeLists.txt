@@ -14,5 +14,7 @@ fcitx_add_addon_full(skk
   EXTRA_PO skk.h)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/dictionary_list.in ${CMAKE_CURRENT_BINARY_DIR}/dictionary_list @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/auto_start_henkan_keywords.in ${CMAKE_CURRENT_BINARY_DIR}/dictionary_list @ONLY)
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dictionary_list rule DESTINATION "${FCITX4_PREFIX}/share/fcitx/skk")
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/auto_start_henkan_keywords rule DESTINATION "${FCITX4_PREFIX}/share/fcitx/skk")
