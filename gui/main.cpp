@@ -36,6 +36,9 @@ SkkConfigPlugin::SkkConfigPlugin(QObject* parent): FcitxQtConfigUIPlugin(parent)
 
 FcitxQtConfigUIWidget* SkkConfigPlugin::create(const QString& key)
 {
+    if (key == "skk/auto_start_henkan_keywords") {
+        return NULL;
+    }
     if (key == "skk/dictionary_list") {
         return new SkkDictWidget;
     }
@@ -46,6 +49,7 @@ QStringList SkkConfigPlugin::files()
 {
     QStringList fileList;
     fileList << "skk/dictionary_list";
+    fileList << "skk/auto_start_henkan_keywords";
     return fileList;
 }
 
