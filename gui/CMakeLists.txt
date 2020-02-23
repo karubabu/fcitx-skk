@@ -4,6 +4,7 @@ set(SKK_CONFIG_SRCS
   adddictdialog.cpp
   dictmodel.cpp
   rulemodel.cpp
+  autostarthenkankeywordswidget.cpp
   )
 fcitx_translate_add_sources(
   ${SKK_CONFIG_SRCS})
@@ -21,7 +22,8 @@ link_directories(
   ${FCITX4_FCITX_CONFIG_LIBRARY_DIRS}
   ${LIBSKK_LIBRARY_DIRS}
   )
-qt5_wrap_ui(SKK_CONFIG_SRCS dictwidget.ui adddictdialog.ui)
+qt5_wrap_ui(SKK_CONFIG_SRCS dictwidget.ui adddictdialog.ui
+    autostarthenkankeywordswidget.ui)
 add_library(fcitx-skk-config
   MODULE ${SKK_CONFIG_SRCS})
 

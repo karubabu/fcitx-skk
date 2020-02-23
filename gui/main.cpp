@@ -25,6 +25,7 @@
 #include <libskk/libskk.h>
 #include "main.h"
 #include "dictwidget.h"
+#include "autostarthenkankeywordswidget.h"
 
 SkkConfigPlugin::SkkConfigPlugin(QObject* parent): FcitxQtConfigUIPlugin(parent)
 {
@@ -37,7 +38,7 @@ SkkConfigPlugin::SkkConfigPlugin(QObject* parent): FcitxQtConfigUIPlugin(parent)
 FcitxQtConfigUIWidget* SkkConfigPlugin::create(const QString& key)
 {
     if (key == "skk/auto_start_henkan_keywords") {
-        return NULL;
+        return new SkkAutoStartHenkanKeywordsWidget;
     }
     if (key == "skk/dictionary_list") {
         return new SkkDictWidget;
