@@ -41,3 +41,4 @@ compile_commands.json
 install_manifest.txt
 gui/*.plist
 src/dictionary_list
+src/auto_start_henkan_keywords
