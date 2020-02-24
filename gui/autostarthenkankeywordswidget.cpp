@@ -1,6 +1,6 @@
 #include "common.h"
 #include "autostarthenkankeywordswidget.h"
-// #include "autostarthenkankeywordsmodel.h"
+#include "autostarthenkankeywordsmodel.h"
 #include "ui_autostarthenkankeywordswidget.h"
 #include <fcitx-config/xdg.h>
 
