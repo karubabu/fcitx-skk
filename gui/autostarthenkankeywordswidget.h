@@ -1,9 +1,10 @@
 #ifndef FCITX_SKK_GUI_AUTOSTARTHENKANKEYWORDSWIDGET_H
 #define FCITX_SKK_GUI_AUTOSTARTHENKANKEYWORDSWIDGET_H
 
+#include "autostarthenkankeywordsmodel.h"
 #include <fcitxqtconfiguiwidget.h>
 
-// class KeywordModel;
+class AutoStartHenkanKeywordsModel;
 namespace Ui {
 class SkkAutoStartHenkanKeywordsWidget;
 }
@@ -24,7 +25,7 @@ public:
 // private Q_SLOTS:
 private:
     Ui::SkkAutoStartHenkanKeywordsWidget* m_ui;
-    // KeywordModel* m_keywordModel;
+    AutoStartHenkanKeywordsModel* m_keywordModel;
 };
 
 #endif // FCITX_SKK_GUI_AUTOSTARTHENKANKEYWORDSWIDGET_H
