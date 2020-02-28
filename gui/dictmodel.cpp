@@ -189,7 +189,7 @@ bool DictModel::moveUp(const QModelIndex& currentIndex)
     if (currentIndex.row() > 0
         && currentIndex.row() < m_dicts.size()) {
         beginResetModel();
-        m_dicts.swap(currentIndex.row() - 1, currentIndex.row());
+        m_dicts.swapItemsAt(currentIndex.row() - 1, currentIndex.row());
         endResetModel();
         return true;
     }
@@ -201,7 +201,7 @@ bool DictModel::moveDown(const QModelIndex& currentIndex)
     if (currentIndex.row() >= 0
         && currentIndex.row() + 1 < m_dicts.size()) {
         beginResetModel();
-        m_dicts.swap(currentIndex.row() + 1, currentIndex.row());
+        m_dicts.swapItemsAt(currentIndex.row() + 1, currentIndex.row());
         endResetModel();
         return true;
     }
