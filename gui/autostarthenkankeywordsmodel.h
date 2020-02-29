@@ -11,7 +11,7 @@ public:
     virtual ~AutoStartHenkanKeywordsModel();
 
     void load();
-    void load(QFile& file);
+    void load(Json::Value& file);
     void defaults();
     bool save();
     void add();
