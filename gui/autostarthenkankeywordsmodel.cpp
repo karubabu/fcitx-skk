@@ -28,24 +28,18 @@ void AutoStartHenkanKeywordsModel::defaults()
     if(!f){
         load(f);
     }
-    //QFile f(path);
-    //if(f.open(QIODevice::ReadOnly)) {
-    //    load(f);
-    //}
 }
 
 void AutoStartHenkanKeywordsModel::load()
 {
-    char** filename_for_ifstream;
+    char** filename_for_ifstream = NULL;
     FILE* fp = FcitxXDGGetFileWithPrefix("skk", "auto_start_henkan_keywords", "r", filename_for_ifstream);
     if(!fp){
         return;
     }
-    //QFile f;
-    //if(!f.open(fp, QIODevice::ReadOnly)) {
-    //    fclose(fp);
-    //    return;
-    //}
+    if(!filename_for_ifstream){
+        return;
+    }
     Json::Value f;
     std::ifstream config_doc(*filename_for_ifstream , std::ifstream::binary);
     if(!config_doc.is_open()){
@@ -59,10 +53,6 @@ void AutoStartHenkanKeywordsModel::load()
     }
     load(f);
     fclose(fp);
-
-    //load(f);
-    //f.close();
-    //fclose(fp);
 }
 
 void AutoStartHenkanKeywordsModel::load(Json::Value& file)
