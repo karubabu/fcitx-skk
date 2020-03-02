@@ -1,13 +1,15 @@
-#include <QFile>
-#include <fcitx-config/xdg.h>
-#include <jsoncpp/json/json.h>
+#include <QString>
 #include <fstream>
+#include <vector>
+#include <string>
+#include <jsoncpp/json/json.h>
+#include <fcitx-config/xdg.h>
 
 #include "autostarthenkankeywordsmodel.h"
 
 AutoStartHenkanKeywordsModel::AutoStartHenkanKeywordsModel(QObject* parent) : QAbstractListModel(parent)
 {
-    m_keywords;
+
 }
 
 AutoStartHenkanKeywordsModel::~AutoStartHenkanKeywordsModel()
@@ -32,34 +34,77 @@ void AutoStartHenkanKeywordsModel::defaults()
 
 void AutoStartHenkanKeywordsModel::load()
 {
-    char** filename_for_ifstream = NULL;
-    FILE* fp = FcitxXDGGetFileWithPrefix("skk", "auto_start_henkan_keywords", "r", filename_for_ifstream);
-    if(!fp){
-        return;
-    }
+    char* filename_for_ifstream = NULL;
+    FcitxXDGGetFileUserWithPrefix("skk", "auto_start_henkan_keywords", NULL, &filename_for_ifstream);
     if(!filename_for_ifstream){
         return;
     }
     Json::Value f;
-    std::ifstream config_doc(*filename_for_ifstream , std::ifstream::binary);
+    std::ifstream config_doc(filename_for_ifstream , std::ifstream::binary);
     if(!config_doc.is_open()){
         // failed to open
         return;
     }
     config_doc >> f;
     if(!f){
-        fclose(fp);
+        // failed to input json
         return;
     }
     load(f);
-    fclose(fp);
+    free(filename_for_ifstream);
 }
 
 void AutoStartHenkanKeywordsModel::load(Json::Value& file)
 {
     beginResetModel();
     m_keywords.clear();
+    const Json::Value  auto_start_henkan_keywords_json_ary = file["auto_start_henkan_keywords"];
+    if(!auto_start_henkan_keywords_json_ary){
+        // can't find auto_start_henkan_keywords array
+        endResetModel();
+        return;
+    }
 
-    QByteArray bytes;
+    for (int index = 0; index < auto_start_henkan_keywords_json_ary.size(); index++) {
+        QString henkan_keyword(auto_start_henkan_keywords_json_ary[index].asCString());
+
+        m_keywords << henkan_keyword;
+    }
     endResetModel();
+}
+
+bool AutoStartHenkanKeywordsModel::save()
+{
+    char* name = NULL;
+    FcitxXDGMakeDirUser("skk");
+    FcitxXDGGetFileUserWithPrefix("skk", "auto_start_henkan_keywords", NULL, &name);
+    Json::Value root;
+    for (int index = 0; index < m_keywords.size(); index++) {
+        root["auto_start_henkan_keywords"].append(m_keywords[index].toStdString());
+    }
+    std::ofstream config_doc(name , std::ifstream::binary);
+    config_doc << root;
+
+    free(name);
+
+    return true;
+}
+
+int AutoStartHenkanKeywordsModel::rowCount(const QModelIndex& parent) const
+{
+    return m_keywords.size();
+}
+
+QVariant AutoStartHenkanKeywordsModel::data(const QModelIndex& index, int role) const
+{
+    if(!index.isValid()){
+        return QVariant();
+    }
+
+    if(index.row() >= m_keywords.size() || index.column() != 0){
+        return QVariant();
+    }
+
+    return QVariant();
+
 }
