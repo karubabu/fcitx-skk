@@ -7,6 +7,7 @@
 SkkAutoStartHenkanKeywordsWidget::SkkAutoStartHenkanKeywordsWidget(QWidget* parent): FcitxQtConfigUIWidget(parent),m_ui(new Ui::SkkAutoStartHenkanKeywordsWidget)
 {
     m_ui->setupUi(this);
+    m_keywordModel = new AutoStartHenkanKeywordsModel(this);
 
 }
 
@@ -32,7 +33,7 @@ QString SkkAutoStartHenkanKeywordsWidget::icon()
 
 void SkkAutoStartHenkanKeywordsWidget::load()
 {
-
+    m_keywordModel->load();
 }
 
 void SkkAutoStartHenkanKeywordsWidget::save()
