@@ -9,6 +9,9 @@ SkkAutoStartHenkanKeywordsWidget::SkkAutoStartHenkanKeywordsWidget(QWidget* pare
     m_ui->setupUi(this);
     m_keywordModel = new AutoStartHenkanKeywordsModel(this);
 
+    m_ui->autostarthenkankeywordsTable->setModel(m_keywordModel);
+
+    load();
 }
 
 SkkAutoStartHenkanKeywordsWidget::~SkkAutoStartHenkanKeywordsWidget()
@@ -38,5 +41,6 @@ void SkkAutoStartHenkanKeywordsWidget::load()
 
 void SkkAutoStartHenkanKeywordsWidget::save()
 {
-
+    m_keywordModel->save();
+    Q_EMIT changed(false);
 }
