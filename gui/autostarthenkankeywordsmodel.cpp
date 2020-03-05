@@ -27,7 +27,7 @@ void AutoStartHenkanKeywordsModel::defaults()
         return;
     }
     config_doc >> f;
-    if(!f){
+    if(f){
         load(f);
     }
 }
@@ -43,11 +43,14 @@ void AutoStartHenkanKeywordsModel::load()
     std::ifstream config_doc(filename_for_ifstream , std::ifstream::binary);
     if(!config_doc.is_open()){
         // failed to open
+        defaults();
+        free(filename_for_ifstream);
         return;
     }
     config_doc >> f;
     if(!f){
         // failed to input json
+        free(filename_for_ifstream);
         return;
     }
     load(f);
@@ -103,6 +106,11 @@ QVariant AutoStartHenkanKeywordsModel::data(const QModelIndex& index, int role) 
 
     if(index.row() >= m_keywords.size() || index.column() != 0){
         return QVariant();
+    }
+
+    switch(role){
+        case Qt::DisplayRole:
+            return m_keywords[index.row()];
     }
 
     return QVariant();
