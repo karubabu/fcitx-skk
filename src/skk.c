@@ -34,6 +34,7 @@
 #include <fcitx/ui.h>
 #include <fcitx/hook.h>
 #include <libskk/libskk.h>
+#include <json-glib-1.0/json-glib/json-glib.h>
 
 #include "skk.h"
 #include "config.h"
@@ -45,6 +46,7 @@ static void FcitxSkkDestroy(void *arg);
 static void FcitxSkkReloadConfig(void *arg);
 static boolean FcitxSkkLoadDictionary(FcitxSkk* skk);
 static boolean FcitxSkkLoadRule(FcitxSkk* skk);
+static boolean FcitxSkkLoadAutoStartHenkanKeywords(FcitxSkk* skk);
 static void FcitxSkkApplyConfig(FcitxSkk* skk);
 
 CONFIG_DEFINE_LOAD_AND_SAVE(Skk, FcitxSkkConfig, "fcitx-skk")
@@ -370,6 +372,92 @@ boolean FcitxSkkLoadRule(FcitxSkk* skk)
     return true;
 }
 
+boolean FcitxSkkLoadAutoStartHenkanKeywords(FcitxSkk* skk)
+{
+    char* keywords_filename = NULL;
+    FcitxXDGGetFileUserWithPrefix("skk", "auto_start_henkan_keywords", NULL, &keywords_filename);
+    g_log(NULL, G_LOG_LEVEL_WARNING, "test1\n");
+
+    if(!keywords_filename)
+    {
+        return false;
+    }
+
+    g_log(NULL, G_LOG_LEVEL_WARNING, "test2\n");
+    JsonParser *parser;
+    JsonNode *root;
+    GError *error = NULL;
+
+    parser = json_parser_new();
+    json_parser_load_from_file(parser, keywords_filename, &error);
+
+    if(error)
+    {
+        if(error->code == G_FILE_ERROR_NOENT)
+        {
+            char* keywords_filename_from_system = fcitx_utils_get_fcitx_path_with_filename("pkgdatadir", "skk/auto_start_henkan_keywords");
+            g_error_free(error);
+            error = NULL;
+            json_parser_load_from_file(parser, keywords_filename_from_system, &error);
+
+            if(error)
+            {
+                g_print("Unable to parse `%s`: %s\n", keywords_filename_from_system, error->message);
+                g_error_free(error);
+                g_object_unref(parser);
+                return false;
+            }
+        }
+        else
+        {
+            g_print("Unable to parse `%s`: %s\n", keywords_filename, error->message);
+            g_error_free(error);
+            g_object_unref(parser);
+            return false;
+        }
+    }
+
+    g_log(NULL, G_LOG_LEVEL_WARNING, "test3\n");
+    root = json_parser_get_root(parser);
+
+    JsonReader *reader = json_reader_new(root);
+
+    if(!json_reader_read_member(reader, "auto_start_henkan_keywords"))
+    {
+        json_reader_end_member(reader);
+        g_object_unref(reader);
+        g_print("Unable to read member `auto_start_henkan_keywords`");
+        return false;
+    }
+    if(!json_reader_is_array(reader))
+    {
+        json_reader_end_member(reader);
+        g_object_unref(reader);
+        g_print("Unable to find `array`");
+        return false;
+    }
+
+    g_log(NULL, G_LOG_LEVEL_WARNING, "test4\n");
+    gint elements = json_reader_count_elements(reader);
+    gchar* AUTO_START_HENKAN_KEYWORDS[elements];
+
+    for (int index = 0; index < elements; index++) {
+        json_reader_read_element(reader, index);
+        const gchar* keyword = json_reader_get_string_value(reader);
+        g_print("auto_start_henkan_keywords array element %d: %s\n", index, keyword);
+        json_reader_end_element(reader);
+
+        AUTO_START_HENKAN_KEYWORDS[index] = keyword;
+    }
+
+    skk_context_set_auto_start_henkan_keywords(skk->context, AUTO_START_HENKAN_KEYWORDS, G_N_ELEMENTS(AUTO_START_HENKAN_KEYWORDS));
+    for (int index = 0; index < elements; index++) {
+        g_log(NULL, G_LOG_LEVEL_WARNING, "auto_start_henkan_keywords array element %d: %s", index, AUTO_START_HENKAN_KEYWORDS[index]);
+    }
+    g_object_unref(reader);
+    g_object_unref(parser);
+    return true;
+}
 
 const char* FcitxSkkGetInputModeIconName(void* arg)
 {
@@ -428,7 +516,7 @@ FcitxSkkCreate(FcitxInstance *instance)
 
     skk->context = skk_context_new(0, 0);
 
-    if (!FcitxSkkLoadDictionary(skk) || !FcitxSkkLoadRule(skk)) {
+    if (!FcitxSkkLoadDictionary(skk) || !FcitxSkkLoadRule(skk) || !FcitxSkkLoadAutoStartHenkanKeywords(skk)) {
         free(skk);
         return NULL;
     }
@@ -473,14 +561,6 @@ FcitxSkkCreate(FcitxInstance *instance)
     skk->retrieve_surrounding_text_handler = g_signal_connect(skk->context, "retrieve_surrounding_text", G_CALLBACK(skk_context_retrieve_surrounding_text_cb), skk);
     skk->delete_surrounding_text_handler = g_signal_connect(skk->context, "delete_surrounding_text", G_CALLBACK(skk_context_delete_surrounding_text_cb), skk);
 
-
-    gchar* AUTO_START_HENKAN_KEYWORDS[] = {
-        "を", "、", "。", "．", "，", "？", "」",
-        "！", "；", "：", ")", ";", ":", "）",
-        "”", "】", "』", "》", "〉", "｝", "］",
-        "〕", "}", "]", "?", ".", ",", "!"
-    };
-    skk_context_set_auto_start_henkan_keywords(skk->context, AUTO_START_HENKAN_KEYWORDS, G_N_ELEMENTS(AUTO_START_HENKAN_KEYWORDS));
 
     FcitxIMEventHook hk;
     hk.arg = skk;
