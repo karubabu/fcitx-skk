@@ -14,10 +14,10 @@ if(NOT ENABLE_QT)
   return()
 endif()
 
-pkg_check_modules(JSONCPP "jsoncpp" REQUIRED)
+pkg_check_modules(JSONGLIB "json-glib-1.0" REQUIRED)
 
 include_directories(${LIBSKK_INCLUDE_DIRS})
-include_directories(${JSONCPP_INCLUDE_DIRS})
+include_directories(${JSONGLIB_INCLUDE_DIRS})
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   )
@@ -25,7 +25,7 @@ include_directories(
 link_directories(
   ${FCITX4_FCITX_CONFIG_LIBRARY_DIRS}
   ${LIBSKK_LIBRARY_DIRS}
-  ${JSONCPP_LIBRARY_DIRS}
+  ${JSONGLIB_LIBRARY_DIRS}
   )
 qt5_wrap_ui(SKK_CONFIG_SRCS dictwidget.ui adddictdialog.ui
     autostarthenkankeywordswidget.ui)
@@ -44,7 +44,7 @@ target_link_libraries(fcitx-skk-config
   FcitxQt5::WidgetsAddons
   ${FCITX4_FCITX_CONFIG_LIBRARIES}
   ${LIBSKK_LIBRARIES}
-  ${JSONCPP_LIBRARIES}
+  ${JSONGLIB_LIBRARIES}
   )
 
 install(TARGETS fcitx-skk-config DESTINATION ${FCITX4_ADDON_INSTALL_DIR}/qt)

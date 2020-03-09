@@ -1,7 +1,7 @@
 #ifndef AUTOSTARTHENKANKEYWORDSMODEL_H
 #define AUTOSTARTHENKANKEYWORDSMODEL_H
 #include <QAbstractListModel>
-#include <jsoncpp/json/json.h>
+#include <json-glib-1.0/json-glib/json-glib.h>
 
 class AutoStartHenkanKeywordsModel : public QAbstractListModel
 {
@@ -13,7 +13,7 @@ public:
     virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
 
     void load();
-    void load(Json::Value& file);
+    void load(JsonNode* file);
     void defaults();
     bool save();
     void add();
