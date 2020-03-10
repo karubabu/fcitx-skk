@@ -383,7 +383,6 @@ boolean FcitxSkkLoadAutoStartHenkanKeywords(FcitxSkk* skk)
     }
 
     JsonParser *parser;
-    JsonNode *root;
     GError *error = NULL;
 
     parser = json_parser_new();
@@ -405,6 +404,8 @@ boolean FcitxSkkLoadAutoStartHenkanKeywords(FcitxSkk* skk)
                 g_object_unref(parser);
                 return false;
             }
+
+            free(keywords_filename_from_system);
         }
         else
         {
@@ -415,13 +416,13 @@ boolean FcitxSkkLoadAutoStartHenkanKeywords(FcitxSkk* skk)
         }
     }
 
-    root = json_parser_get_root(parser);
-    JsonReader *reader = json_reader_new(root);
+    JsonReader *reader = json_reader_new(json_parser_get_root(parser));
 
     if(!json_reader_read_member(reader, "auto_start_henkan_keywords"))
     {
         json_reader_end_member(reader);
         g_object_unref(reader);
+        g_object_unref(parser);
         g_print("Unable to read member `auto_start_henkan_keywords`");
         return false;
     }
@@ -429,6 +430,7 @@ boolean FcitxSkkLoadAutoStartHenkanKeywords(FcitxSkk* skk)
     {
         json_reader_end_member(reader);
         g_object_unref(reader);
+        g_object_unref(parser);
         g_print("Unable to find `array`");
         return false;
     }
@@ -447,6 +449,7 @@ boolean FcitxSkkLoadAutoStartHenkanKeywords(FcitxSkk* skk)
     skk_context_set_auto_start_henkan_keywords(skk->context, AUTO_START_HENKAN_KEYWORDS, G_N_ELEMENTS(AUTO_START_HENKAN_KEYWORDS));
     g_object_unref(reader);
     g_object_unref(parser);
+    free(keywords_filename);
     return true;
 }
 
