@@ -376,14 +376,12 @@ boolean FcitxSkkLoadAutoStartHenkanKeywords(FcitxSkk* skk)
 {
     char* keywords_filename = NULL;
     FcitxXDGGetFileUserWithPrefix("skk", "auto_start_henkan_keywords", NULL, &keywords_filename);
-    g_log(NULL, G_LOG_LEVEL_WARNING, "test1\n");
 
     if(!keywords_filename)
     {
         return false;
     }
 
-    g_log(NULL, G_LOG_LEVEL_WARNING, "test2\n");
     JsonParser *parser;
     JsonNode *root;
     GError *error = NULL;
@@ -417,9 +415,7 @@ boolean FcitxSkkLoadAutoStartHenkanKeywords(FcitxSkk* skk)
         }
     }
 
-    g_log(NULL, G_LOG_LEVEL_WARNING, "test3\n");
     root = json_parser_get_root(parser);
-
     JsonReader *reader = json_reader_new(root);
 
     if(!json_reader_read_member(reader, "auto_start_henkan_keywords"))
@@ -437,23 +433,18 @@ boolean FcitxSkkLoadAutoStartHenkanKeywords(FcitxSkk* skk)
         return false;
     }
 
-    g_log(NULL, G_LOG_LEVEL_WARNING, "test4\n");
     gint elements = json_reader_count_elements(reader);
     gchar* AUTO_START_HENKAN_KEYWORDS[elements];
 
     for (int index = 0; index < elements; index++) {
         json_reader_read_element(reader, index);
         const gchar* keyword = json_reader_get_string_value(reader);
-        g_print("auto_start_henkan_keywords array element %d: %s\n", index, keyword);
         json_reader_end_element(reader);
 
         AUTO_START_HENKAN_KEYWORDS[index] = keyword;
     }
 
     skk_context_set_auto_start_henkan_keywords(skk->context, AUTO_START_HENKAN_KEYWORDS, G_N_ELEMENTS(AUTO_START_HENKAN_KEYWORDS));
-    for (int index = 0; index < elements; index++) {
-        g_log(NULL, G_LOG_LEVEL_WARNING, "auto_start_henkan_keywords array element %d: %s", index, AUTO_START_HENKAN_KEYWORDS[index]);
-    }
     g_object_unref(reader);
     g_object_unref(parser);
     return true;
@@ -816,6 +807,7 @@ static void FcitxSkkReloadConfig(void* arg)
     FcitxSkkApplyConfig(skk);
     FcitxSkkLoadRule(skk);
     FcitxSkkLoadDictionary(skk);
+    FcitxSkkLoadAutoStartHenkanKeywords(skk);
 }
 
 void FcitxSkkApplyConfig(FcitxSkk* skk)
