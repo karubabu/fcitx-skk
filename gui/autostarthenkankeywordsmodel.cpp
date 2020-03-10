@@ -41,6 +41,7 @@ void AutoStartHenkanKeywordsModel::defaults()
     if(root){
         load(root);
     }
+    free(path);
 }
 
 void AutoStartHenkanKeywordsModel::load()
@@ -102,6 +103,7 @@ void AutoStartHenkanKeywordsModel::load(JsonNode* file)
     {
         json_reader_end_member(reader);
         g_object_unref(reader);
+        g_object_unref(file);
         g_print("Unable to read member `auto_start_henkan_keywords`");
         endResetModel();
         return;
@@ -110,6 +112,7 @@ void AutoStartHenkanKeywordsModel::load(JsonNode* file)
     {
         json_reader_end_member(reader);
         g_object_unref(reader);
+        g_object_unref(file);
         g_print("Unable to find `array`");
         endResetModel();
         return;
@@ -125,6 +128,7 @@ void AutoStartHenkanKeywordsModel::load(JsonNode* file)
     }
 
     g_object_unref(reader);
+    g_object_unref(file);
     endResetModel();
 }
 
