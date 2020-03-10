@@ -43,6 +43,7 @@ void DictModel::defaults()
     if (f.open(QIODevice::ReadOnly)) {
         load(f);
     }
+    free(path);
 }
 
 void DictModel::load()
