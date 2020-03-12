@@ -13,7 +13,7 @@ public:
     virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
 
     void load();
-    void load(JsonNode* file);
+    void load(JsonParser* file);
     void defaults();
     bool save();
     void add();

@@ -23,7 +23,6 @@ void AutoStartHenkanKeywordsModel::defaults()
     char* path = fcitx_utils_get_fcitx_path_with_filename("pkgdatadir", "skk/auto_start_henkan_keywords");
     qDebug() << "Defaults_path:" << QString(path);
     JsonParser *parser;
-    JsonNode *root;
     GError *error = NULL;
 
     parser = json_parser_new();
@@ -37,10 +36,7 @@ void AutoStartHenkanKeywordsModel::defaults()
         return;
     }
 
-    root = json_parser_get_root(parser);
-    if(root){
-        load(root);
-    }
+    load(parser);
     free(path);
 }
 
@@ -49,7 +45,6 @@ void AutoStartHenkanKeywordsModel::load()
     char* filename = NULL;
     FcitxXDGGetFileUserWithPrefix("skk", "auto_start_henkan_keywords", NULL, &filename);
     JsonParser *parser;
-    JsonNode *root;
     GError *error = NULL;
 
     if(!filename){
@@ -82,28 +77,27 @@ void AutoStartHenkanKeywordsModel::load()
         }
     }
 
-    root = json_parser_get_root(parser);
-    if(!root){
-        // failed to input json
-        g_object_unref(parser);
-        free(filename);
-        return;
-    }
-    load(root);
+    load(parser);
     free(filename);
 }
 
-void AutoStartHenkanKeywordsModel::load(JsonNode* file)
+void AutoStartHenkanKeywordsModel::load(JsonParser* parser)
 {
     beginResetModel();
     m_keywords.clear();
-    JsonReader *reader = json_reader_new(file);
+    JsonReader *reader = json_reader_new(json_parser_get_root(parser));
+    if(!reader)
+    {
+        g_object_unref(parser);
+        endResetModel();
+        return;
+    }
 
     if(!json_reader_read_member(reader, "auto_start_henkan_keywords"))
     {
         json_reader_end_member(reader);
         g_object_unref(reader);
-        g_object_unref(file);
+        g_object_unref(parser);
         g_print("Unable to read member `auto_start_henkan_keywords`");
         endResetModel();
         return;
@@ -112,7 +106,7 @@ void AutoStartHenkanKeywordsModel::load(JsonNode* file)
     {
         json_reader_end_member(reader);
         g_object_unref(reader);
-        g_object_unref(file);
+        g_object_unref(parser);
         g_print("Unable to find `array`");
         endResetModel();
         return;
@@ -128,7 +122,7 @@ void AutoStartHenkanKeywordsModel::load(JsonNode* file)
     }
 
     g_object_unref(reader);
-    g_object_unref(file);
+    g_object_unref(parser);
     endResetModel();
 }
 
