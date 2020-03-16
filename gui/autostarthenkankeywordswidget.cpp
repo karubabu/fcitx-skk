@@ -11,6 +11,10 @@ SkkAutoStartHenkanKeywordsWidget::SkkAutoStartHenkanKeywordsWidget(QWidget* pare
 
     m_ui->autostarthenkankeywordsTable->setModel(m_keywordModel);
 
+    connect(m_ui->addKeywordButton, SIGNAL(clicked(bool)), this, SLOT(addKeywordClicked()));
+    connect(m_ui->defaultKeywordsButton, SIGNAL(clicked(bool)), this,  SLOT(defaultKeywordsClicked()));
+    connect(m_ui->removeKeywordButton, SIGNAL(clicked(bool)), this, SLOT(removeKeywordClicked()));
+
     load();
 }
 
