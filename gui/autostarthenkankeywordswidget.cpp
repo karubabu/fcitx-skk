@@ -37,6 +37,7 @@ QString SkkAutoStartHenkanKeywordsWidget::icon()
 void SkkAutoStartHenkanKeywordsWidget::load()
 {
     m_keywordModel->load();
+    Q_EMIT changed(false);
 }
 
 void SkkAutoStartHenkanKeywordsWidget::save()
