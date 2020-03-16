@@ -22,7 +22,10 @@ public:
     virtual QString addon();
     virtual QString icon();
 
-// private Q_SLOTS:
+private Q_SLOTS:
+    void addKeywordClicked();
+    void defaultKeywordsClicked();
+    void removeKeywordClicked();
 private:
     Ui::SkkAutoStartHenkanKeywordsWidget* m_ui;
     AutoStartHenkanKeywordsModel* m_keywordModel;
