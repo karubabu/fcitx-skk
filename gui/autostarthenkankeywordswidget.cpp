@@ -45,3 +45,21 @@ void SkkAutoStartHenkanKeywordsWidget::save()
     m_keywordModel->save();
     Q_EMIT changed(false);
 }
+
+void SkkAutoStartHenkanKeywordsWidget::addKeywordClicked()
+{
+}
+
+void SkkAutoStartHenkanKeywordsWidget::defaultKeywordsClicked()
+{
+    m_keywordModel->defaults();
+    Q_EMIT changed(true);
+}
+
+void SkkAutoStartHenkanKeywordsWidget::removeKeywordClicked()
+{
+    if(m_ui->autostarthenkankeywordsTable->currentIndex().isValid())
+    {
+        Q_EMIT changed(true);
+    }
+}
