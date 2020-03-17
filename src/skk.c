@@ -400,7 +400,6 @@ boolean FcitxSkkLoadAutoStartHenkanKeywords(FcitxSkk* skk)
 
             if(error)
             {
-                g_print("Unable to parse `%s`: %s\n", keywords_filename_from_system, error->message);
                 g_error_free(error);
                 g_object_unref(parser);
                 return false;
@@ -410,7 +409,6 @@ boolean FcitxSkkLoadAutoStartHenkanKeywords(FcitxSkk* skk)
         }
         else
         {
-            g_print("Unable to parse `%s`: %s\n", keywords_filename, error->message);
             g_error_free(error);
             g_object_unref(parser);
             return false;
@@ -424,7 +422,6 @@ boolean FcitxSkkLoadAutoStartHenkanKeywords(FcitxSkk* skk)
         json_reader_end_member(reader);
         g_object_unref(reader);
         g_object_unref(parser);
-        g_print("Unable to read member `auto_start_henkan_keywords`");
         return false;
     }
     if(!json_reader_is_array(reader))
@@ -432,7 +429,6 @@ boolean FcitxSkkLoadAutoStartHenkanKeywords(FcitxSkk* skk)
         json_reader_end_member(reader);
         g_object_unref(reader);
         g_object_unref(parser);
-        g_print("Unable to find `array`");
         return false;
     }
 
