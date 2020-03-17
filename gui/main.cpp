@@ -1,6 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2013~2013 by CSSlayer                                   *
  *   wengxt@gmail.com                                                      *
+ *   Copyright (C) 2020~2020 by karubabu                                   *
  *                                                                         *
  *  This program is free software: you can redistribute it and/or modify   *
  *  it under the terms of the GNU General Public License as published by   *
@@ -25,6 +26,7 @@
 #include <libskk/libskk.h>
 #include "main.h"
 #include "dictwidget.h"
+#include "autostarthenkankeywordswidget.h"
 
 SkkConfigPlugin::SkkConfigPlugin(QObject* parent): FcitxQtConfigUIPlugin(parent)
 {
@@ -36,6 +38,9 @@ SkkConfigPlugin::SkkConfigPlugin(QObject* parent): FcitxQtConfigUIPlugin(parent)
 
 FcitxQtConfigUIWidget* SkkConfigPlugin::create(const QString& key)
 {
+    if (key == "skk/auto_start_henkan_keywords") {
+        return new SkkAutoStartHenkanKeywordsWidget;
+    }
     if (key == "skk/dictionary_list") {
         return new SkkDictWidget;
     }
@@ -46,6 +51,7 @@ QStringList SkkConfigPlugin::files()
 {
     QStringList fileList;
     fileList << "skk/dictionary_list";
+    fileList << "skk/auto_start_henkan_keywords";
     return fileList;
 }
 

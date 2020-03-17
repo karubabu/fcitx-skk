@@ -3,6 +3,7 @@
  *   yyc1992@gmail.com                                                     *
  *   Copyright (C) 2012~2013 by Weng Xuetian                               *
  *   wengxt@gmail.com                                                      *
+ *   Copyright (C) 2020~2020 by karubabu                                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -34,6 +35,7 @@
 #include <fcitx/ui.h>
 #include <fcitx/hook.h>
 #include <libskk/libskk.h>
+#include <json-glib-1.0/json-glib/json-glib.h>
 
 #include "skk.h"
 #include "config.h"
@@ -45,6 +47,7 @@ static void FcitxSkkDestroy(void *arg);
 static void FcitxSkkReloadConfig(void *arg);
 static boolean FcitxSkkLoadDictionary(FcitxSkk* skk);
 static boolean FcitxSkkLoadRule(FcitxSkk* skk);
+static boolean FcitxSkkLoadAutoStartHenkanKeywords(FcitxSkk* skk);
 static void FcitxSkkApplyConfig(FcitxSkk* skk);
 
 CONFIG_DEFINE_LOAD_AND_SAVE(Skk, FcitxSkkConfig, "fcitx-skk")
@@ -370,6 +373,82 @@ boolean FcitxSkkLoadRule(FcitxSkk* skk)
     return true;
 }
 
+boolean FcitxSkkLoadAutoStartHenkanKeywords(FcitxSkk* skk)
+{
+    char* keywords_filename = NULL;
+    FcitxXDGGetFileUserWithPrefix("skk", "auto_start_henkan_keywords", NULL, &keywords_filename);
+
+    if(!keywords_filename)
+    {
+        return false;
+    }
+
+    JsonParser *parser;
+    GError *error = NULL;
+
+    parser = json_parser_new();
+    json_parser_load_from_file(parser, keywords_filename, &error);
+
+    if(error)
+    {
+        if(error->code == G_FILE_ERROR_NOENT)
+        {
+            char* keywords_filename_from_system = fcitx_utils_get_fcitx_path_with_filename("pkgdatadir", "skk/auto_start_henkan_keywords");
+            g_error_free(error);
+            error = NULL;
+            json_parser_load_from_file(parser, keywords_filename_from_system, &error);
+
+            if(error)
+            {
+                g_error_free(error);
+                g_object_unref(parser);
+                return false;
+            }
+
+            free(keywords_filename_from_system);
+        }
+        else
+        {
+            g_error_free(error);
+            g_object_unref(parser);
+            return false;
+        }
+    }
+
+    JsonReader *reader = json_reader_new(json_parser_get_root(parser));
+
+    if(!json_reader_read_member(reader, "auto_start_henkan_keywords"))
+    {
+        json_reader_end_member(reader);
+        g_object_unref(reader);
+        g_object_unref(parser);
+        return false;
+    }
+    if(!json_reader_is_array(reader))
+    {
+        json_reader_end_member(reader);
+        g_object_unref(reader);
+        g_object_unref(parser);
+        return false;
+    }
+
+    gint elements = json_reader_count_elements(reader);
+    gchar* AUTO_START_HENKAN_KEYWORDS[elements];
+
+    for (int index = 0; index < elements; index++) {
+        json_reader_read_element(reader, index);
+        const gchar* keyword = json_reader_get_string_value(reader);
+        json_reader_end_element(reader);
+
+        AUTO_START_HENKAN_KEYWORDS[index] = (gchar*)keyword;
+    }
+
+    skk_context_set_auto_start_henkan_keywords(skk->context, AUTO_START_HENKAN_KEYWORDS, G_N_ELEMENTS(AUTO_START_HENKAN_KEYWORDS));
+    g_object_unref(reader);
+    g_object_unref(parser);
+    free(keywords_filename);
+    return true;
+}
 
 const char* FcitxSkkGetInputModeIconName(void* arg)
 {
@@ -428,7 +507,7 @@ FcitxSkkCreate(FcitxInstance *instance)
 
     skk->context = skk_context_new(0, 0);
 
-    if (!FcitxSkkLoadDictionary(skk) || !FcitxSkkLoadRule(skk)) {
+    if (!FcitxSkkLoadDictionary(skk) || !FcitxSkkLoadRule(skk) || !FcitxSkkLoadAutoStartHenkanKeywords(skk)) {
         free(skk);
         return NULL;
     }
@@ -473,14 +552,6 @@ FcitxSkkCreate(FcitxInstance *instance)
     skk->retrieve_surrounding_text_handler = g_signal_connect(skk->context, "retrieve_surrounding_text", G_CALLBACK(skk_context_retrieve_surrounding_text_cb), skk);
     skk->delete_surrounding_text_handler = g_signal_connect(skk->context, "delete_surrounding_text", G_CALLBACK(skk_context_delete_surrounding_text_cb), skk);
 
-
-    gchar* AUTO_START_HENKAN_KEYWORDS[] = {
-        "を", "、", "。", "．", "，", "？", "」",
-        "！", "；", "：", ")", ";", ":", "）",
-        "”", "】", "』", "》", "〉", "｝", "］",
-        "〕", "}", "]", "?", ".", ",", "!"
-    };
-    skk_context_set_auto_start_henkan_keywords(skk->context, AUTO_START_HENKAN_KEYWORDS, G_N_ELEMENTS(AUTO_START_HENKAN_KEYWORDS));
 
     FcitxIMEventHook hk;
     hk.arg = skk;
@@ -736,6 +807,7 @@ static void FcitxSkkReloadConfig(void* arg)
     FcitxSkkApplyConfig(skk);
     FcitxSkkLoadRule(skk);
     FcitxSkkLoadDictionary(skk);
+    FcitxSkkLoadAutoStartHenkanKeywords(skk);
 }
 
 void FcitxSkkApplyConfig(FcitxSkk* skk)
