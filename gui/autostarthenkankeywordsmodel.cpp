@@ -4,7 +4,6 @@
 #include <string>
 #include <json-glib-1.0/json-glib/json-glib.h>
 #include <fcitx-config/xdg.h>
-#include <QDebug>
 
 #include "autostarthenkankeywordsmodel.h"
 
@@ -21,7 +20,6 @@ AutoStartHenkanKeywordsModel::~AutoStartHenkanKeywordsModel()
 void AutoStartHenkanKeywordsModel::defaults()
 {
     char* path = fcitx_utils_get_fcitx_path_with_filename("pkgdatadir", "skk/auto_start_henkan_keywords");
-    qDebug() << "Defaults_path:" << QString(path);
     JsonParser *parser;
     GError *error = NULL;
 
@@ -29,8 +27,6 @@ void AutoStartHenkanKeywordsModel::defaults()
     json_parser_load_from_file(parser, path, &error);
 
     if(error){
-        qDebug() << "faild to open: Json::Value " << QString(path);
-        g_print("Unable to parse `%s`: %s\n", path, error->message);
         g_error_free(error);
         g_object_unref(parser);
         return;
@@ -51,16 +47,12 @@ void AutoStartHenkanKeywordsModel::load()
         return;
     }
 
-    qDebug() << "load()_path:" << QString(filename);
     parser = json_parser_new();
     json_parser_load_from_file(parser, filename, &error);
 
     if(error){
         if(error->code == G_FILE_ERROR_NOENT)
         {
-            // failed to open
-            qDebug() << "faild to open: " << QString(filename);
-            g_print("Unable to parse `%s`: %s\n", filename, error->message);
             g_error_free(error);
             g_object_unref(parser);
 
@@ -69,7 +61,6 @@ void AutoStartHenkanKeywordsModel::load()
             return;
 
         }else{
-            g_print("Unable to parse `%s`: %s\n", filename, error->message);
             g_error_free(error);
             g_object_unref(parser);
             free(filename);
@@ -98,7 +89,6 @@ void AutoStartHenkanKeywordsModel::load(JsonParser* parser)
         json_reader_end_member(reader);
         g_object_unref(reader);
         g_object_unref(parser);
-        g_print("Unable to read member `auto_start_henkan_keywords`");
         endResetModel();
         return;
     }
@@ -107,7 +97,6 @@ void AutoStartHenkanKeywordsModel::load(JsonParser* parser)
         json_reader_end_member(reader);
         g_object_unref(reader);
         g_object_unref(parser);
-        g_print("Unable to find `array`");
         endResetModel();
         return;
     }
@@ -115,7 +104,6 @@ void AutoStartHenkanKeywordsModel::load(JsonParser* parser)
     for (int index = 0; index < json_reader_count_elements(reader); index++) {
         json_reader_read_element(reader, index);
         std::string keyword(json_reader_get_string_value(reader));
-        g_print("auto_start_henkan_keywords array element %d: %s\n", index, keyword.c_str());
         json_reader_end_element(reader);
 
         m_keywords << QString(keyword.c_str());
@@ -137,7 +125,6 @@ bool AutoStartHenkanKeywordsModel::save()
         return false;
     }
 
-    qDebug() << "save()_path:" << QString(name);
     JsonBuilder *builder = json_builder_new();
     json_builder_begin_object(builder);
 
@@ -160,7 +147,6 @@ bool AutoStartHenkanKeywordsModel::save()
 
     if(error)
     {
-        g_print("Unable to write `%s`: %s\n", name, error->message);
         g_error_free(error);
         json_node_free(root);
         g_object_unref(gen);
