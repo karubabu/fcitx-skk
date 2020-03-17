@@ -1,5 +1,6 @@
 #include "common.h"
 #include "autostarthenkankeywordswidget.h"
+#include "addkeyworddialog.h"
 #include "autostarthenkankeywordsmodel.h"
 #include "ui_autostarthenkankeywordswidget.h"
 #include <fcitx-config/xdg.h>
@@ -52,6 +53,13 @@ void SkkAutoStartHenkanKeywordsWidget::save()
 
 void SkkAutoStartHenkanKeywordsWidget::addKeywordClicked()
 {
+    AddKeywordDialog dialog;
+    int result = dialog.exec();
+    if(result == QDialog::Accepted)
+    {
+        m_keywordModel->add(dialog.keyword());
+        Q_EMIT changed(true);
+    }
 }
 
 void SkkAutoStartHenkanKeywordsWidget::defaultKeywordsClicked()

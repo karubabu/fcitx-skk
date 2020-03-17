@@ -221,3 +221,10 @@ bool AutoStartHenkanKeywordsModel::removeRows(int row, int count, const QModelIn
 
     return true;
 }
+
+void AutoStartHenkanKeywordsModel::add(const QString& keyword)
+{
+    beginInsertRows(QModelIndex(), m_keywords.size(), m_keywords.size());
+    m_keywords << keyword;
+    endInsertRows();
+}

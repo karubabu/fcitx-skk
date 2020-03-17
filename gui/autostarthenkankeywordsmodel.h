@@ -17,7 +17,7 @@ public:
     void load(JsonParser* file);
     void defaults();
     bool save();
-    void add();
+    void add(const QString& keyword);
 private:
     QList< QString > m_keywords;
 };
