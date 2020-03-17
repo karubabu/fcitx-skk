@@ -64,6 +64,7 @@ void SkkAutoStartHenkanKeywordsWidget::removeKeywordClicked()
 {
     if(m_ui->autostarthenkankeywordsTable->currentIndex().isValid())
     {
+        m_keywordModel->removeRow(m_ui->autostarthenkankeywordsTable->currentIndex().row());
         Q_EMIT changed(true);
     }
 }

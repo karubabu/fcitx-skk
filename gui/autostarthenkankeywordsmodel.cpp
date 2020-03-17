@@ -200,3 +200,24 @@ QVariant AutoStartHenkanKeywordsModel::data(const QModelIndex& index, int role) 
     return QVariant();
 
 }
+
+bool AutoStartHenkanKeywordsModel::removeRows(int row, int count, const QModelIndex& parent)
+{
+    if(parent.isValid())
+    {
+        return false;
+    }
+
+    if(count == 0
+        || row >= m_keywords.size()
+        || row + count > m_keywords.size())
+    {
+        return false;
+    }
+
+    beginRemoveRows(parent, row, row + count - 1);
+    m_keywords.erase(m_keywords.begin() + row, m_keywords.begin() + row + count);
+    endRemoveRows();
+
+    return true;
+}
