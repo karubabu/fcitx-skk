@@ -440,7 +440,7 @@ boolean FcitxSkkLoadAutoStartHenkanKeywords(FcitxSkk* skk)
         const gchar* keyword = json_reader_get_string_value(reader);
         json_reader_end_element(reader);
 
-        AUTO_START_HENKAN_KEYWORDS[index] = keyword;
+        AUTO_START_HENKAN_KEYWORDS[index] = (gchar*)keyword;
     }
 
     skk_context_set_auto_start_henkan_keywords(skk->context, AUTO_START_HENKAN_KEYWORDS, G_N_ELEMENTS(AUTO_START_HENKAN_KEYWORDS));
