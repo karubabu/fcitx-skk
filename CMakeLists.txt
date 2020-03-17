@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 2.8.6)
+cmake_minimum_required(VERSION 3.16.5)
 project(fcitx-skk)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 option(ENABLE_QT "Enable Qt for GUI configuration" On)
 
-find_package(Fcitx 4.2.8 REQUIRED)
+find_package(Fcitx 4.2.9 REQUIRED)
 include(FindPkgConfig)
 pkg_check_modules(LIBSKK "libskk" REQUIRED)
 _fcitx_add_uninstall_target()
