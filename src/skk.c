@@ -708,6 +708,9 @@ FcitxSkkGetCandWords(void *arg)
     case ChooseASDF:
         FcitxCandidateWordSetChoose(candList, ASDF_STR_CHOOSE);
         break;
+    case ChooseASDFJ:
+        FcitxCandidateWordSetChoose(candList, ASDFJ_STR_CHOOSE);
+        break;
     case ChooseAOEU:
         FcitxCandidateWordSetChoose(candList, AOEU_STR_CHOOSE);
         break;
@@ -718,7 +721,14 @@ FcitxSkkGetCandWords(void *arg)
         break;
     }
 
-    FcitxCandidateWordSetPageSize(candList, skk->config.pageSize);
+    switch (skk->config.candidateChooseKey){
+    case ChooseASDFJ:
+        FcitxCandidateWordSetPageSize(candList, 7);
+        break;
+    default:
+        FcitxCandidateWordSetPageSize(candList, skk->config.pageSize);
+        break;
+    }
     FcitxCandidateWordSetLayoutHint(candList, skk->config.candidateLayout);
 
     if (skk_candidate_list_get_page_visible(skkCandList)) {

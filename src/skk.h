@@ -36,12 +36,14 @@
 
 #define ABCD_STR_CHOOSE "abcdefghij"
 #define ASDF_STR_CHOOSE "asdfghjkl;"
+#define ASDFJ_STR_CHOOSE "asdfjkl;"
 #define AOEU_STR_CHOOSE "aoeuidhtns"
 
 typedef enum _FcitxSkkChooseKeyType {
     ChooseDigit,
     ChooseABCD,
     ChooseASDF,
+    ChooseASDFJ,
     ChooseAOEU
 } FcitxSkkChooseKeyType;
 
