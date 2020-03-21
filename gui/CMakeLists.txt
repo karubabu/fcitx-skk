@@ -15,7 +15,6 @@ if(NOT ENABLE_QT)
   return()
 endif()
 
-pkg_check_modules(JSONGLIB "json-glib-1.0" REQUIRED)
 
 include_directories(${LIBSKK_INCLUDE_DIRS})
 include_directories(${JSONGLIB_INCLUDE_DIRS})
