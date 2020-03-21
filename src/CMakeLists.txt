@@ -20,4 +20,4 @@ fcitx_add_addon_full(skk
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/dictionary_list.in ${CMAKE_CURRENT_BINARY_DIR}/dictionary_list @ONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/auto_start_henkan_keywords.in ${CMAKE_CURRENT_BINARY_DIR}/auto_start_henkan_keywords @ONLY)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dictionary_list rule auto_start_henkan_keywords DESTINATION "${FCITX4_PREFIX}/share/fcitx/skk")
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dictionary_list rule ${CMAKE_CURRENT_BINARY_DIR}/auto_start_henkan_keywords DESTINATION "${FCITX4_PREFIX}/share/fcitx/skk")
