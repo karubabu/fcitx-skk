@@ -34,6 +34,7 @@
 #include <fcitx/keys.h>
 #include <fcitx/ui.h>
 #include <fcitx/hook.h>
+#include <gtk-3.0/gtk/gtk.h>
 #include <libskk/libskk.h>
 #include <json-glib-1.0/json-glib/json-glib.h>
 
@@ -174,6 +175,17 @@ static gboolean skk_context_delete_surrounding_text_cb (SkkContext* self, gint o
         return false;
     FcitxInstanceDeleteSurroundingText(skk->owner, ic, offset, nchars);
     return true;
+}
+
+static void skk_context_request_selection_text_cb (SkkContext* self, gpointer user_data) {
+    FcitxSkk *skk = (FcitxSkk*) user_data;
+    FcitxInputContext* ic = FcitxInstanceGetCurrentIC(skk->owner);
+    if (!ic) {
+        return ;
+    }
+    GtkClipboard *clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+    skk_context_set_selection_text(self, gtk_clipboard_wait_for_text(clipboard));
+    return ;
 }
 
 typedef enum _FcitxSkkDictType {
@@ -504,6 +516,7 @@ FcitxSkkCreate(FcitxInstance *instance)
 #endif
 
     skk_init();
+    gtk_init_check(0, NULL);
 
     skk->context = skk_context_new(0, 0);
 
@@ -551,6 +564,7 @@ FcitxSkkCreate(FcitxInstance *instance)
     skk->notify_preedit_handler = g_signal_connect(skk->context, "notify::preedit", G_CALLBACK(skk_candidate_update_preedit_cb), skk);
     skk->retrieve_surrounding_text_handler = g_signal_connect(skk->context, "retrieve_surrounding_text", G_CALLBACK(skk_context_retrieve_surrounding_text_cb), skk);
     skk->delete_surrounding_text_handler = g_signal_connect(skk->context, "delete_surrounding_text", G_CALLBACK(skk_context_delete_surrounding_text_cb), skk);
+    skk->request_selection_text_handler = g_signal_connect(skk->context, "request_selection_text", G_CALLBACK(skk_context_request_selection_text_cb), skk);
 
 
     FcitxIMEventHook hk;
@@ -575,6 +589,7 @@ FcitxSkkDestroy(void *arg)
     g_signal_handler_disconnect(skk->context, skk->notify_preedit_handler);
     g_signal_handler_disconnect(skk->context, skk->retrieve_surrounding_text_handler);
     g_signal_handler_disconnect(skk->context, skk->delete_surrounding_text_handler);
+    g_signal_handler_disconnect(skk->context, skk->request_selection_text_handler);
     g_object_unref(skk->context);
     free(arg);
 }

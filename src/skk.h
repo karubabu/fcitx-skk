@@ -73,6 +73,7 @@ typedef struct {
     gulong notify_preedit_handler;
     gulong retrieve_surrounding_text_handler;
     gulong delete_surrounding_text_handler;
+    gulong request_selection_text_handler;
 } FcitxSkk;
 
 CONFIG_BINDING_DECLARE(FcitxSkkConfig);

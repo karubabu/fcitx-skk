@@ -9,6 +9,7 @@ include(FindPkgConfig)
 pkg_check_modules(LIBSKK "libskk" REQUIRED)
 pkg_check_modules(GLIB "glib-2.0" REQUIRED)
 pkg_check_modules(JSONGLIB "json-glib-1.0" REQUIRED)
+pkg_check_modules(GTK3 "gtk+-3.0" REQUIRED)
 _fcitx_add_uninstall_target()
 
 set(CMAKE_C_FLAGS "-Wall -Wextra -Wno-sign-compare -Wno-unused-parameter -fvisibility=hidden ${CMAKE_C_FLAGS}")
