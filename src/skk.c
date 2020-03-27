@@ -178,14 +178,8 @@ static gboolean skk_context_delete_surrounding_text_cb (SkkContext* self, gint o
 }
 
 static void skk_context_request_selection_text_cb (SkkContext* self, gpointer user_data) {
-    FcitxSkk *skk = (FcitxSkk*) user_data;
-    FcitxInputContext* ic = FcitxInstanceGetCurrentIC(skk->owner);
-    if (!ic) {
-        return ;
-    }
     GtkClipboard *clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
     skk_context_set_selection_text(self, gtk_clipboard_wait_for_text(clipboard));
-    return ;
 }
 
 typedef enum _FcitxSkkDictType {
