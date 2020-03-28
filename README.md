@@ -9,6 +9,7 @@ fcitx-skk is an input method engine for Fcitx, which uses libskk as its backend.
  - fcitx 4.2.9
  - skk-jisyo
  - libjson-glib-1.0-0
+ - gtk3
 
 ### For Ubuntu User
 
@@ -19,6 +20,7 @@ Please install this packages before build this Program.
  - libfcitx-qt5-dev
  - skkdic
  - libjson-glib-1.0-0
+ - libgtk3.0-cil-dev
 
     $ sudo aptitude install libskk-dev qtbase5-dev libfcitx-qt5-dev skkdic
 
